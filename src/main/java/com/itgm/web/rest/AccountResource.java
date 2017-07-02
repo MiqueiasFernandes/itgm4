@@ -207,6 +207,7 @@ public class AccountResource {
         @RequestParam("file") MultipartFile file) {
         User user = userService.getUserWithAuthorities();
         String token = "";
+        System.out.println("Tentando enviar " + file + "... ");
         if (Itgmrest.postBinario(
             user.getLogin(),
             "*",
@@ -214,7 +215,8 @@ public class AccountResource {
             "*",
             file.getOriginalFilename(),
             "data/", file)) {
-           token = Itgmrest.publicFile(
+            System.out.println("Imagem " + file + " enviada, publicando... ");
+            token = Itgmrest.publicFile(
                user.getLogin(),
                "*",
                "*",
@@ -223,7 +225,8 @@ public class AccountResource {
                file.getOriginalFilename(),
                false,
                false
-               );
+            );
+            System.out.println("Imagem " + file + " publicada em " + token);
         }
         return new ResponseEntity<String>("{\"image\":\"" + token + "\"}", HttpStatus.OK);
     }
@@ -236,7 +239,7 @@ public class AccountResource {
     @GetMapping("/status")
     @Timed
     public ResponseEntity<String> getStatus() {
-        return new ResponseEntity("{\"status\":\""+ Itgmrest.isServerAlive() + "}", HttpStatus.OK);
+        return new ResponseEntity("{\"status\":"+ Itgmrest.isServerAlive() + "}", HttpStatus.OK);
     }
 
 }

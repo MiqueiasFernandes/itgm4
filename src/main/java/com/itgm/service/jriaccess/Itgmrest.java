@@ -1,13 +1,15 @@
 package com.itgm.service.jriaccess;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.net.Socket;
 import java.util.Arrays;
 
 /**
@@ -15,9 +17,14 @@ import java.util.Arrays;
  */
 public class Itgmrest {
 
-    private static final String SERVER = "http://itgm.mikeias.net:8080/";
+    private static final Logger log = LoggerFactory.getLogger(Itgmrest.class);
+
+    private static final boolean UPLOAD_ALTERNATIVO = true;
+
+    private static final String HOST = "itgm.mikeias.net";
+    private static final String SERVER = "http://"+HOST+":8080/";
     private static final String SERVICE = SERVER + "ITGMRest2/webresources/jriaccess/";
-//    @GET
+    //    @GET
     private static final String PATH_GET_PROCESSOS = SERVICE + "process/";
     private static final String PATH_GET_COMPARTILHAMENTO = SERVICE + "compartilhamento/";
     private static final String PATH_GET_COMPARTILHADO = SERVICE + "compartilhado/"; ///compartilhado/{usuario}/{token}
@@ -25,16 +32,16 @@ public class Itgmrest {
     private static final String PATH_GET_LIST = SERVICE + "list/"; ///list/{usuario}/{projeto}/{cenario}/{diretorio}
     private static final String PATH_GET_CONTENT = SERVICE + "content/"; ///"content/{usuario}/{projeto}/{cenario}/{diretorio}/{file}"
     private static final String PATH_GET_FILE = SERVICE + "file/"; ///file/{usuario}/{projeto}/{cenario}/{diretorio}/{file}
-//    @PUT
+    //    @PUT
     private static final String PATH_PUT_SUSPENDER = SERVICE + "suspend/";
     private static final String PATH_PUT_RESUMIR = SERVICE + "resume/";
     private static final String PATH_PUT_PARAR = SERVICE + "stop/";
-//    @POST
+    //    @POST
     private static final String PATH_POST_PROCESSO = SERVICE + ""; ///{usuario}/{projeto}/{cenario}/{diretorio}
     private static final String PATH_POST_UPDATE = SERVICE + "update/";
     private static final String PATH_POST_DIRETORIO = SERVICE + "diretorio/";
     private static final String PATH_POST_FILE = SERVICE + ""; ///{usuario}/{projeto}/{cenario}/{diretorio}/{file}
-//    @DELETE
+    //    @DELETE
     private static final String PATH_DELETE_PROCESSO = SERVICE + "process/"; ///process/{token}
     private static final String PATH_DELETE_USUARIO = SERVICE + "usuario/"; ///usuario/{usuario}
     private static final String PATH_DELETE_PROJETO = SERVICE + "projeto/"; ///projeto/{usuario}/{projeto}
@@ -64,8 +71,9 @@ public class Itgmrest {
         return PATH_GET_CONTENT + usuario  + "/"
             + projeto + "/"
             + cenario + "/"
-            + diretorio
-            + "?subdiretorio=" + subdiretorio
+            + diretorio + "/"
+            + file + "?"
+            + (subdiretorio != null && !subdiretorio.isEmpty() ? "subdiretorio=" + subdiretorio : "")
             + "&cript=" + criptografar;
     }
     private static String buidURIforGET_FILE(
@@ -74,20 +82,22 @@ public class Itgmrest {
         String cenario,
         String diretorio,
         String subdiretorio,
+        String file,
         boolean returnMeta,
         boolean isImage) {
         return PATH_GET_FILE + usuario  + "/" +
             projeto + "/" +
             cenario + "/" +
-            diretorio
-            + "?subdiretorio=" + subdiretorio
+            diretorio + "/" +
+             file + "?"
+            + (subdiretorio != null && !subdiretorio.isEmpty() ? "subdiretorio=" + subdiretorio : "")
             + "&meta=" + returnMeta
             + "&image=" + isImage;
     }
     private static String buidURIforPOST_PROCESSO(String usuario,
-                      String projeto,
-                      String cenario,
-                      String diretorio) {
+                                                  String projeto,
+                                                  String cenario,
+                                                  String diretorio) {
         return PATH_POST_PROCESSO + usuario  + "/" + projeto + "/" + cenario + "/" + diretorio;
     }
     private static String buidURIforDELETE_PROCESSO(String token) {
@@ -106,54 +116,60 @@ public class Itgmrest {
         return PATH_DELETE_DIRETORIO + usuario  + "/" + projeto + "/" + cenario + "/" + diretorio;
     }
     private static String buidURIforDELETE_ARQUIVO(String usuario,
-                                    String projeto,
-                                    String cenario,
-                                    String diretorio,
-                                    String subdiretorio) {
-        return PATH_DELETE_ARQUIVO + usuario  + "/" + projeto + "/" + cenario + "/" + diretorio + "?subdiretorio=" + subdiretorio;
+                                                   String projeto,
+                                                   String cenario,
+                                                   String diretorio,
+                                                   String subdiretorio) {
+        return PATH_DELETE_ARQUIVO +
+            usuario  + "/" +
+            projeto + "/" +
+            cenario + "/" +
+            diretorio + "?"
+            + (subdiretorio != null && !subdiretorio.isEmpty() ? "subdiretorio=" + subdiretorio : "");
     }
     private static String buidURIforPOST_FILE(String usuario,
-                               String projeto,
-                               String cenario,
-                               String diretorio,
-                               String file,
-                               String subdiretorio) {
+                                              String projeto,
+                                              String cenario,
+                                              String diretorio,
+                                              String file,
+                                              String subdiretorio) {
         return PATH_POST_FILE +
             usuario  + "/" +
             projeto + "/" +
             cenario + "/" +
             diretorio + "/" +
-            file+ "?subdiretorio=" + subdiretorio;
+            file + "?"
+            + (subdiretorio != null && !subdiretorio.isEmpty() ? "subdiretorio=" + subdiretorio : "");
     }
 
     private static Object getOnTemplate(String path, Class classe, Object retorno) {
-        System.out.println("#######################GET " + path +"############################");
+        log.info("#######################GET " + path +"############################");
         try {
             return getRestTemplate().getForObject( path,  classe);
         }catch (Exception e) {
-            System.err.println("ERRO AO TENTAR: GET " + path + " EX: " + e);
+            log.error("ERRO AO TENTAR: GET " + path + " EX: " + e);
         }
         return retorno;
     }
 
     private static Object postOnTemplate(String path, Object enviado, Class classe, Object retorno) {
-        System.out.println("#######################POST " + path +"############################");
+        log.info("#######################POST " + path +"############################");
         try {
             return getRestTemplate().postForObject(
                 path, enviado,  classe);
         }catch (Exception e) {
-            System.err.println("ERRO AO TENTAR: POST " + path + " EX: " + e);
+            log.error("ERRO AO TENTAR: POST " + path + " EX: " + e);
         }
         return retorno;
     }
 
     private static boolean deleteOnTemplate(String path) {
-        System.out.println("#######################DELETE " + path +"############################");
+        log.info("#######################DELETE " + path +"############################");
         try {
             getRestTemplate().delete(path);
             return true;
         }catch (Exception e) {
-            System.err.println("ERRO AO TENTAR: POST " + path + " EX: " + e);
+            log.error("ERRO AO TENTAR: POST " + path + " EX: " + e);
         }
         return false;
     }
@@ -168,8 +184,36 @@ public class Itgmrest {
         );
     }
 
+
+    public static String getContent(String usuario,
+                                    String projeto,
+                                    String cenario,
+                                    String diretorio,
+                                    String arquivo,
+                                    String subdiretorio,
+                                    boolean cript,
+                                    String retornar) {
+        return (String) getOnTemplate(buidURIforGET_CONTENT(
+            usuario,
+            projeto,
+            cenario,
+            diretorio,
+            arquivo,
+            subdiretorio,
+            cript), String.class, retornar);
+
+    }
+
+
     private static boolean postBINARIO(String path, MultipartFile file) {
         try {
+
+            if(UPLOAD_ALTERNATIVO){
+                path = path.replace(SERVICE, "");
+                path = SERVICE + "stream/" + path;
+                return uploadAlternativo(path, file.getBytes());
+            }
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setAccept(Arrays.asList(new MediaType[]{MediaType.TEXT_PLAIN}));
@@ -181,41 +225,16 @@ public class Itgmrest {
                 postOnTemplate(path, entity, String.class, "false")
             );
         }catch (Exception ex){
-            System.err.println("ERRO AO TENTAR SERIALIZAR EX: " + ex);
+            log.error("ERRO AO TENTAR SERIALIZAR EX: " + ex);
         }
         return false;
     }
 
-
-
-    public static void criarUsuario(String login, String data) {
-        postTEXTO(buidURIforPOST_FILE(login,
-            "*",
-            "*",
-            "*",
-            "user.data",
-            "desc/"), data);
-    }
-
-    public static void criarProjeto(String login, String projeto, String data) {
-        postTEXTO(buidURIforPOST_FILE(login,
-            projeto,
-            "*",
-            "*",
-            "projeto.data",
-            "desc/"), data);
-    }
-
-    public static void criarCenario(String login, String projeto, String cenario, String data) {
-        postTEXTO(buidURIforPOST_FILE(login,
-            projeto,
-            cenario,
-            "*",
-            "cenario.data",
-            "desc/"), data);
-    }
-
-    public static void criarDiretorio(String login, String projeto, String cenario, String diretorio, String data) {
+    public static void criarDiretorio(String login,
+                                      String projeto,
+                                      String cenario,
+                                      String diretorio,
+                                      String data) {
         postTEXTO(buidURIforPOST_FILE(login,
             projeto,
             cenario,
@@ -225,7 +244,8 @@ public class Itgmrest {
     }
 
     public static boolean isServerAlive() {
-      String retorno = (String) getOnTemplate(PATH_GET_PROCESSOS, String.class, null);
+        String retorno = (String) getOnTemplate(PATH_GET_PROCESSOS, String.class, null);
+        log.info("SERVER STATUS: " + retorno);
         return retorno.startsWith("{\"process\":[") && retorno.endsWith("]}");
     }
 
@@ -254,20 +274,7 @@ public class Itgmrest {
         );
     }
 
-//    private static File convert(MultipartFile file) {
-//        File convFile = new File(file.getOriginalFilename());
-//        try {
-//            convFile.createNewFile();
-//            FileOutputStream fos;
-//            fos = new FileOutputStream(convFile);
-//            fos.write(file.getBytes());
-//            fos.close();
-//        } catch (Exception ex) {
-//            System.err.println("not saving file: " + ex);
-//            return null;
-//        }
-//        return convFile;
-//    }
+
 
 
     public static String listFiles(String usuario, String projeto, String cenario, String diretorio) {
@@ -310,9 +317,9 @@ public class Itgmrest {
         String query = "?&parametros=BATCH" +
             "&parametros=log.txt" +
             "&parametros=INFO" +
-            "&memoria=20" +
-            "&cpu=1" +
-            "&disco=20" +
+            "&memoria=500" +
+            "&cpu=100" +
+            "&disco=500" +
             "&salvar=true";
         try {
             postOnTemplate(
@@ -379,7 +386,7 @@ public class Itgmrest {
                 String.class,
                 "");
         }catch (Exception ex){
-            System.err.println("ERRO AO POST PROCESS " + ex);
+            log.error("ERRO AO POST PROCESS " + ex);
         }
         return "";
     }
@@ -394,13 +401,55 @@ public class Itgmrest {
         boolean meta,
         boolean image) {
         String ret = (String) getOnTemplate(
-            buidURIforGET_FILE(usuario, projeto, cenario, diretorio, subdiretorio, meta, image),
+            buidURIforGET_FILE(usuario, projeto, cenario, diretorio, subdiretorio, file, meta, image),
             String.class,
             ""
         ) ;
-        return (ret != null && ret.length() > 0 && !ret.isEmpty() && !ret.startsWith("error:")) ? ret : null;
+        return (ret != null && ret.length() > 0 && !ret.isEmpty() && !ret.startsWith("error:")) ? ret : "";
     }
 
+
+    ///"stream/{usuario}/{projeto}/{cenario}/{diretorio}/{file}"
+///http://itgm.mikeias.net:8080/ITGMRest2/webresources/jriaccess/stream/mfernandes/*/*/*/image.jpg?subdiretorio=data/
+    public static final boolean uploadAlternativo(final String path, final byte[] data){
+
+        final int porta = Integer.parseInt(((String)
+            getOnTemplate(path, String.class, "{\"porta\":-1}"))
+            .split(":")[1]
+            .replace("}", ""));
+
+        log.info("Porta do server para: " + path + " é " + porta);
+
+        if (porta >= 8880 && porta < 8890){
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+            try {
+                log.info("iniciando o envio do arquivo...");
+
+                Socket s = new Socket(HOST, porta);
+                BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                String answer = input.readLine();
+                log.info("SERVIDOR REMOTO UPLOAD FILE " + answer);
+
+                s.getOutputStream().write(data);
+                s.getOutputStream().flush();
+                s.getOutputStream().close();
+                input.close();
+                s.close();
+
+                log.info("o arquivo " + path + " foi enviado com sucesso...");
+                return true;
+            }catch (Exception ex){
+                log.error("Houve um erro no envio do arquivo " + path + " ex: " + ex);
+            }
+        }
+//            }).start();
+//            return true;
+//        }
+
+        return  false;
+    }
 
 
 }

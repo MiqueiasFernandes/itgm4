@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { JhiLanguageService } from 'ng-jhipster';
 
 import { Principal, AccountService, JhiLanguageHelper } from '../../shared';
+import {CustomizeService} from '../../entities/customize/customize.service';
 
 @Component({
     selector: 'jhi-settings',
@@ -15,14 +16,20 @@ export class SettingsComponent implements OnInit {
     file: any;
     onLoad = false;
     showMenu = false;
+    server: string = "itgm.mikeias.net";
 
     constructor(
         private account: AccountService,
         private principal: Principal,
         private languageService: JhiLanguageService,
-        private languageHelper: JhiLanguageHelper
+        private languageHelper: JhiLanguageHelper,
+        private customizeService: CustomizeService,
     ) {
         this.languageService.setLocations(['settings']);
+        this.customizeService.getDesktop().subscribe((desktop) => {
+            this.showMenu = desktop.entidades;
+            this.server = desktop.servidor;
+        });
     }
 
     ngOnInit() {
@@ -50,6 +57,7 @@ export class SettingsComponent implements OnInit {
             this.success = null;
             this.error = 'ERROR';
         });
+        this.customizeService.setServidor(this.server);
     }
 
     copyAccount(account) {
@@ -81,6 +89,6 @@ export class SettingsComponent implements OnInit {
     }
 
     alterarMenu() {
-        ////this.customizeService.setMenuEntidades(this.showMenu = !this.showMenu);
+        this.customizeService.setMenuEntidades(this.showMenu = !this.showMenu);
     }
 }

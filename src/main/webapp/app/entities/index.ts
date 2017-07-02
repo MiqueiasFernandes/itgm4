@@ -10,5 +10,5 @@ export * from './modelo-exclusivo';
 export * from './prognose';
 export * from './projeto';
 export * from './terminal';
-
+export * from './customize';
 
