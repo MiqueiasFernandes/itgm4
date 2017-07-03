@@ -1,3 +1,62 @@
-<p>
-  fab-add-prognose works!
-</p>
+
+
+
+<div class="modal-header">
+    <h4 class="modal-title">Adicionar novo Terminal Emulado</h4>
+    <button aria-label="Close" data-dismiss="modal" class="close" type="button" (click)="close()"><span aria-hidden="true">x</span>
+    </button>
+</div>
+<div class="modal-body">
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+
+
+
+
+            <!--<ngb-tabset type="pills">-->
+                <!--<ngb-tab title="Simple">-->
+                    <!--<ng-template ngbTabContent>-->
+                        <!--<p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth-->
+                            <!--master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh-->
+                            <!--dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum-->
+                            <!--iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>-->
+                    <!--</ng-template>-->
+                <!--</ngb-tab>-->
+                <!--<ngb-tab>-->
+                    <!--<ng-template ngbTabTitle><b>Fancy</b> title</ng-template>-->
+                    <!--<ng-template ngbTabContent>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.-->
+                        <!--<p>Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table-->
+                            <!--craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl-->
+                            <!--cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia-->
+                            <!--yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean-->
+                            <!--shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero-->
+                            <!--sint qui sapiente accusamus tattooed echo park.</p>-->
+                    <!--</ng-template>-->
+                <!--</ngb-tab>-->
+                <!--<ngb-tab title="Disabled" [disabled]="true">-->
+                    <!--<ng-template ngbTabContent>-->
+                        <!--<p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth-->
+                            <!--master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh-->
+                            <!--dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum-->
+                            <!--iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>-->
+                    <!--</ng-template>-->
+                <!--</ngb-tab>-->
+            <!--</ngb-tabset>-->
+
+
+
+
+            <ul class="nav nav-pills">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Messages</a></li>
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button (click)="adicionarTerminal()" class="btn btn-primary"  [disabled]="onLoad">Criar</button>
+</div>

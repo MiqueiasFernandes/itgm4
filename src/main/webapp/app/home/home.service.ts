@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
 
 import { EventManager } from 'ng-jhipster';
 
 import {Customize, CustomizeService} from '../entities/customize/';
-import {Card, CardService} from "../entities/card";
-import {Cenario} from "../entities/cenario/cenario.model";
+import {Card, CardService} from '../entities/card';
+import {Cenario} from '../entities/cenario/cenario.model';
+import {Terminal} from '../entities/terminal';
 
 
 @Injectable()
@@ -18,14 +19,12 @@ export class HomeService {
     ) { }
 
 
-
     public getCards(cenario: Cenario):Observable<Card[][]> {
         if(!cenario)
             return Observable.of([]);
         return this.cardService.getCardsByCenario(cenario)
             .map((cards: Card[]) => this.mapearCards(cards));
     }
-
 
     public mapearCards(cards: Card[]):Card[][] {
 
@@ -41,65 +40,6 @@ export class HomeService {
         return linhas;
     }
 
-
-
-    // public injectIPcard(cards: string[][]):Observable<{}> {
-    //     return this.account.getEndereco()
-    //         .map(
-    //             (endereco: string) => {
-    //                //endereco = endereco.replace('http:', 'https:');
-    //                //  endereco = endereco.replace(':80', '');
-    //                 let array: string[][] = [];
-    //                 let resolver: string[] = [];
-    //                 cards.forEach((linha: string[]) => {
-    //                     let cols = [];
-    //                     linha.forEach((coluna: string) => {
-    //                         const card: string[] = this.getCard(coluna, false);
-    //                         const tipo:string = card !== null ? this.getTipo(card) : null;
-    //                         if(tipo) {
-    //                             const cod =  this.getCodigo(card).split(',');
-    //                             let url = cod[1];
-    //                             if(url.indexOf('|') > 0) {
-    //                                 url = url.split('|')[1];
-    //                             }
-    //                             card[3] = this
-    //                                 .criaCodigoParaArquivo(
-    //                                     cod[0],
-    //                                     endereco + '|' + url,
-    //                                     tipo,
-    //                                     cod[4], cod[2], cod[3], cod[4], cod[5]);
-    //                             cols.push(card.join(':'));
-    //                             // if(tipo === 'rbokeh') {
-    //                             //     resolver.push((endereco + url));
-    //                             // }
-    //                         }else {
-    //                             cols.push(coluna);
-    //                         }
-    //                     });
-    //                     array.push(cols);
-    //                 });
-    //                 return [array, resolver, endereco];
-    //             });
-    // }
-
-    // public getLinhas(desktop: string): string[] {
-    //     return desktop.split(';');
-    // }
-    //
-    // public getColunas(linha: string): string[] {
-    //     return linha.split(',');
-    // }
-
-    // public getCards(linhas: string[]): string[][] {
-    //
-    //     let array = [];
-    //     linhas.forEach((linha: string) => {
-    //         array.push(this.getColunas(linha));
-    //     });
-    //
-    //     return array;
-    // }
-
     public getAllCards(cards: Card[][]): Card[] {
         let array = [];
 
@@ -112,36 +52,9 @@ export class HomeService {
         return array;
     }
 
-
-    // public removeItem(linha: number, coluna: number, cards: string[][]): string[][] {
-    //     const card =  cards[linha][coluna];
-    //     cards[linha][coluna] = card.substring(0, card.lastIndexOf(':') + 1) + 'X';
-    //
-    //     const cardsV = this.getCardsValidos(cards[linha], null)[0];
-    //
-    //     if( !cardsV || (cardsV.length < 1)) {
-    //         cards[linha] = null;
-    //     }
-    //     return cards;
-    // }
-
-    // public setCards(cards: string[][]) {
-    //
-    //     let array  = [];
-    //
-    //     cards.forEach((linha: string[]) => {
-    //         if(linha && linha.length > 0) {
-    //             array.push(linha.join(','));
-    //         }
-    //     });
-    //
-    //    // this.customizeService.customizeDesktop(array.join(';'));
-    // }
-
-
     public abrirArquivo(arquivo: string, meta: any, caminho: string, previa: string) {
         const modo: string =  this.getTipoPorArquivo(arquivo);
-        const largura: number = this.getTamanhoIdealDeColuna(arquivo,modo);
+        const largura: number = this.getTamanhoIdealDeColuna(modo);
 
         let decoded = 'formato imprevisivel';
 
@@ -182,7 +95,7 @@ export class HomeService {
                                 arquivo,  //arquivo
                                 this.getExtensao(arquivo), //extensao
                                 largura,  // largura
-                                this.getClassePorTipo(arquivo, modo), // classe
+                                this.getClassePorTipo(modo), // classe
                                 '', // codigo
                                 custom.cenario // cenario
                             )).subscribe((card) => {
@@ -201,7 +114,7 @@ export class HomeService {
         );
     }
 
-    getLinhaEColunaIdeal(tamanho: number, cenario: Cenario): Observable<number[]> {
+    public getLinhaEColunaIdeal(tamanho: number, cenario: Cenario): Observable<number[]> {
         return  this.getCards(cenario).map(
             (cards: Card[][]) => {
 
@@ -242,8 +155,7 @@ export class HomeService {
         )
     }
 
-
-    public getTamanhoIdealDeColuna(url: string, tipo: string):number {
+    public getTamanhoIdealDeColuna(tipo: string):number {
         switch (tipo) {
             case 'figura':
             case 'planilha':
@@ -253,6 +165,7 @@ export class HomeService {
             case 'codigo':
                 return 4;
             case 'rbokeh':
+            case 'terminal':
                 return 6;
             default:
                 return 2;
@@ -297,7 +210,7 @@ export class HomeService {
         return ext;
     }
 
-    public getClassePorTipo(arquivo: string, tipo: string): string {
+    public getClassePorTipo(tipo: string): string {
         let classe = "card jh-card";
         switch (tipo) {
             case 'figura':
@@ -316,6 +229,9 @@ export class HomeService {
             case 'rdata':
                 classe += ' meta';
                 break;
+            case 'terminal':
+                classe += ' terminal';
+                break;
             default:
                 classe += ' meta';
         }
@@ -328,6 +244,7 @@ export class HomeService {
             case 'rbokeh':
             case 'texto':
             case 'codigo':
+            case 'terminal':
                 return 2;
             case  'planilha':
             case 'rdata':
@@ -335,117 +252,6 @@ export class HomeService {
                 return 1;
         }
     }
-
-    // public criaCodigoParaArquivo(nome: string, url: string, tipo: string, texto: string,
-    //                              size: any, caminho: string, width: any, height: any): string {
-    //     let codigo = 'X';
-    //     switch (tipo) {
-    //         case 'figura':
-    //             return btoa(nome + ',' + url + ',' + size + ',' + caminho + ',' + width + ',' + height);
-    //         case 'rbokeh':
-    //         case  'planilha':
-    //         case 'rdata':
-    //             return btoa(nome + ',' + url+ ',' + size + ',' + caminho );
-    //         case 'texto':
-    //         case 'codigo':
-    //             return btoa(nome + ',' + url + ',' + size + ',' + caminho + ',' + texto);
-    //     }
-    //     return codigo;
-    // }
-
-    // public insereCardOrdenado(coluna: number, classe: string, tipo: string, codigo: string) {
-    //
-    //     this.getDesktop().subscribe(
-    //         (cards: string[][]) => {
-    //             let array = [];
-    //             let add = false;
-    //             let added;
-    //             cards.forEach((linha: string[]) => {
-    //                 if(linha && linha.length > 0) {
-    //                     if (!add && ((this.tamanhoColuna(linha) + coluna) <= 12)) {
-    //                         const resp :[string[], boolean] = this.getCardsValidos(linha,
-    //                             (added = (coluna + ':' + classe + ':' + tipo + ':' + codigo)));
-    //                         linha = resp[0];
-    //                         add = resp[1];
-    //                     }
-    //                     array.push(linha);
-    //                 }
-    //             });
-    //             if (!add) {
-    //                 cards.push([added = (coluna + ':' + classe + ':' + tipo + ':' + codigo)]);
-    //             }else{
-    //                 cards = array;
-    //             }
-    //             this.setCards(cards);
-    //         }
-    //     );
-    //
-    // }
-
-    /// tamanho:classe:tipo:codigo
-
-    // public isCardValido(card: string, aceitaX: boolean): boolean {
-    //     let parts = [];
-    //     return (card &&
-    //         (card.length > 0) &&
-    //         (parts = card.split(':')).length === 4 &&
-    //         (parts[0] && (parts[0].length > 0)) && (parseInt(parts[0]) <= 12)
-    //         && parts[1] && parts[1].length > 2
-    //         && parts[2] && parts[2].length > 2
-    //         && (parts[3]) && (parts[3].length > 1 || (aceitaX && parts[3] === 'X'))
-    //     );
-    // }
-
-    // public getCard(card: string, aceitaX: boolean):string[] {
-    //     return this.isCardValido(card, aceitaX) ? card.split(':') : null;
-    // }
-
-    // public getTamanhoColuna(card: string[]):number {
-    //     return parseInt(card[0]);
-    // }
-
-    // public getClasse(card: string[]):string {
-    //     return card[1];
-    // }
-
-    // public getTipo(card: string[]):string {
-    //     return card[2];
-    // }
-
-    // public getCodigo(card: string[]):string {
-    //     return card[3] !== 'X' ? atob(card[3]) : 'X';
-    // }
-
-    // public getCardsValidos(cards: string[], substituto: string):[string[], boolean] {
-    //     let array = [];
-    //
-    //     cards.forEach((card: string) => {
-    //         if(this.isCardValido(card, false)) {
-    //             array.push(card);
-    //         } else if(substituto) {
-    //             array.push(substituto);
-    //             substituto = null;
-    //         }
-    //     });
-    //
-    //     if(substituto && ((this.tamanhoColuna(cards) + parseInt(substituto.split(':')[0])) <= 12 )) {
-    //         array.push(substituto);
-    //         substituto = null;
-    //     }
-    //
-    //     return [array, substituto === null];
-    // }
-
-    // public tamanhoColuna(cards: string[]):number {
-    //     const crds = this.getCardsValidos(cards, null)[0];
-    //     let tam: number = 0;
-    //     if(crds && crds.length > 0) {
-    //         crds.forEach((card: string) => {
-    //             tam += parseInt(card.split(':')[0]);
-    //         });
-    //     }
-    //     return tam;
-    // }
 
     public isText(file: string):boolean {
         return ['texto', 'codigo'].indexOf(this.getTipoPorArquivo(file)) >= 0;
@@ -476,6 +282,59 @@ export class HomeService {
     private notificar() {
         this.eventManager
             .broadcast({ name: 'cardListModification', content: 'OK'});
+    }
+
+    openTerminal(terminal: Terminal) {
+        const modo = 'terminal';
+        const largura: number = this.getTamanhoIdealDeColuna(modo);
+        this.customizeService.getCustomize().subscribe(
+            (custom:Customize) => {
+                if(custom && custom.cenario) {
+                    this.getLinhaEColunaIdeal(largura, custom.cenario)
+                        .subscribe(
+                            (tamanho: number[]) => {
+                                this.cardService.create(new Card(
+                                    undefined, //     id
+                                    terminal.nome, // nome
+                                    terminal.url, // url
+                                    false, // https
+                                    '{\"codigo\":\"' + terminal.url +
+                                    '\",\"status\":' + terminal.status +
+                                    ',\"terminal\":' + terminal.id +
+                                    '}', // meta
+                                    '', // previa
+                                    '{\"x\":0,\"y\":0}', // disposicao
+                                    this.abreAberto(modo), // tipo - como o card esta aberto: aberto fechado
+                                    tamanho[0],// linha
+                                    tamanho[1], // coluna
+                                    modo,  // modo = figuram, textom, grafco
+                                    custom.cenario.caminho + terminal.nome + '/', // caminho
+                                    '',  //arquivo
+                                    '', //extensao
+                                    largura,  // largura
+                                    this.getClassePorTipo(modo), // classe
+                                    terminal.url, // codigo
+                                    custom.cenario // cenario
+                                )).subscribe((card) => {
+                                        console.log(card);
+                                        this.notificar();
+                                    },
+                                    (error) => {
+                                        alert('houve um erro ao abrir o card: ' + error);
+                                    });
+                            }
+                        );
+                }else{
+                    alert('selecione o cenario!');
+                }
+            }
+        );
+    }
+
+    atualizar(card: Card) {
+        this.cardService.update(card).subscribe(
+            () => { console.log('card ' + card.id + ' atualizado! ') }
+        );
     }
 
 }

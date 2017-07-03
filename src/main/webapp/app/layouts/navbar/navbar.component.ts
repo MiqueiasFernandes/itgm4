@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
 import { Router } from '@angular/router';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiLanguageService } from 'ng-jhipster';
@@ -14,7 +13,7 @@ import {ShareService} from '../share/share.service';
 import {SidebarService} from '../sidebar/sidebar.service';
 import {CustomizeService} from "../../entities/customize/customize.service";
 import {AccountService} from "../../shared/auth/account.service";
-import {stat} from "fs";
+
 
 @Component({
     selector: 'jhi-navbar',

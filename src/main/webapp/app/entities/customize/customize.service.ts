@@ -295,7 +295,7 @@ export class CustomizeService {
                 if (customize && customize.desktop && customize.desktop.length > 7) {
                     return JSON.parse(customize.desktop);
                 }
-                return {entidades: false, servidor: "itgm.mikeias.net"};
+                return {entidades: false, servidor: 'itgm.mikeias.net'};
             });
     }
 

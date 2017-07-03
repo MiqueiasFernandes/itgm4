@@ -26,6 +26,9 @@ import {CustomizeService} from "../entities/customize/customize.service";
 import {Customize} from "../entities/customize/customize.model";
 import {Card} from "../entities/card/card.model";
 import {AccountService} from "../shared/auth/account.service";
+import {Terminal} from "../entities/terminal/terminal.model";
+import {Observable} from "rxjs/Observable";
+import {TerminalService} from "../entities/terminal/terminal.service";
 
 @Component({
     selector: 'jhi-home',
@@ -62,6 +65,7 @@ export class HomeComponent implements OnInit {
     dropdows = [];
     windowRef :any;
     transitions = [];
+    terminais: Terminal[] = [];
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -72,6 +76,7 @@ export class HomeComponent implements OnInit {
         private customizeService: CustomizeService,
         private accountService: AccountService,
         private domSanitizer: DomSanitizer,
+        private terminalService: TerminalService,
     ) {
         this.jhiLanguageService.setLocations(['home']);
         this.windowRef = homeService.getNativeWnidow();
@@ -94,6 +99,7 @@ export class HomeComponent implements OnInit {
 
         this.eventManager.subscribe('logout', () =>{
             this.cards = [];
+            this.terminais = [];
         });
 
         this.eventManager.subscribe('customizeListModification', () => {
@@ -108,6 +114,7 @@ export class HomeComponent implements OnInit {
     }
 
     updateCards() {
+        const atualizar: Card[] = [];
         this.customizeService.getCustomize().subscribe(
             (custom: Customize) => {
                 if(custom && custom.cenario) {
@@ -117,8 +124,11 @@ export class HomeComponent implements OnInit {
                                 cars.forEach((card: Card, coluna: number) => {
                                     this.transitions[card.id] = 'in';
                                     let meta: any = this.getMeta(card);
-                                    meta.endereco = "http://itgm.mikeias.net:8098/temp/";
-                                    meta.enderecoseguro = "https://itgm.mikeias.net:8099/temp/";
+                                    meta = Object.assign(meta,
+                                        {endereco: 'http://itgm.mikeias.net:8098/temp/',
+                                            enderecoseguro: 'https://itgm.mikeias.net:8099/temp/',
+                                            enderecows: 'ws://itgm.mikeias.net:8080/ITGMRest2/jriaccesslive/'
+                                        });
                                     card.meta = JSON.stringify(meta);
                                     if (!this.cards[linha] ||
                                         !this.cards[linha][coluna] ||
@@ -127,9 +137,23 @@ export class HomeComponent implements OnInit {
                                         if (!this.cards[linha]) {
                                             this.cards[linha] = [];
                                         }
-                                        card.linha = linha;
-                                        card.coluna = coluna;
+                                        if (card.linha !== linha || card.coluna !== coluna) {
+                                            card.linha = linha;
+                                            card.coluna = coluna;
+                                            atualizar.push(card);
+                                        }
                                         this.cards[linha][coluna] = card;
+                                        if (card.modo === 'terminal') {
+                                            this
+                                                .getTerminal(this.getMeta(card).terminal)
+                                                .subscribe((terminal: Terminal) => {
+                                                    this.terminais[card.id] = terminal =
+                                                        Object.assign(new Terminal(), terminal);
+                                                    if (terminal.status === 2) {
+                                                        terminal.conectar(JSON.parse(card.meta).enderecows);
+                                                    }
+                                                });
+                                        }
                                     }
                                 });
                             });
@@ -139,45 +163,19 @@ export class HomeComponent implements OnInit {
                     this.cards = [];
                     this.transitions = [];
                     this.dropdows = [];
+                    this.terminais = [];
                 }
             }
         );
+
+        atualizar.forEach(card => this.homeService.atualizar(card));
+
     }
 
-    // updateFromCustomize() {
-    //     this.homeService.getDesktop()
-    //         .subscribe(
-    //             (cards: string[][]) => {
-    //                 this.homeService.injectIPcard(cards)
-    //                     .subscribe(
-    //                         (cardss: [string[][], string[]]) => {
-    //                             const cards =  cardss[0];
-    //                             cards.forEach((linha: string[], l:number) => {
-    //                                 linha.forEach((card: string, c:number) => {
-    //
-    //                                     if (!(this.cards[l] &&
-    //                                         this.cards[l][c] &&
-    //                                         this.cards[l][c].localeCompare(card) === 0)) {
-    //                                         if( !this.cards[l]) {
-    //                                             this.cards[l] = [];
-    //                                         }
-    //                                         this.cards[l][c] = card;
-    //                                     }
-    //
-    //                                     this.transitions[this.getID(l, c)] = 'in';
-    //                                 });
-    //                             });
-    //                             this.desktop = cards.length > 0;
-    //                             this.endereco = cardss[2];
-    //                             // cardss[1].forEach((url: string) => {
-    //                             //     this.resolvidos[url.split('/')[4].replace('.', '')] = this.domSanitizer
-    //                             //         .bypassSecurityTrustResourceUrl(url);
-    //                             // });
-    //                         }
-    //                     );
-    //             }
-    //         );
-    // }
+
+    getTerminal(id: number):Observable<Terminal> {
+        return this.terminalService.find(id);
+    }
 
     isAuthenticated() {
         return this.principal.isAuthenticated();
@@ -189,9 +187,13 @@ export class HomeComponent implements OnInit {
 
     getMeta(card: Card): any {
         if(card && card.meta && card.meta.length > 2) {
-            return JSON.parse(card.meta);
+            try {
+                return JSON.parse(card.meta);
+            } catch (e) {
+                console.log('impossivel obter meta de ' + card.meta + ' error ' + e);
+            }
         }
-        return null;
+        return {};
     }
 
     getSize(card: Card):string {
@@ -234,6 +236,10 @@ export class HomeComponent implements OnInit {
                 .getNativeWnidow()
                 .atob(text).split('\n')
                 .join('</code><br><code>') + '</code>';
+    }
+
+    isArquivo(card: Card):boolean {
+        return ['figura','rbokeh','texto','codigo','planilha','rdata'].indexOf(card.modo) >= 0;
     }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,7 +299,7 @@ export class HomeComponent implements OnInit {
             case 'rdata':
             case 'texto':
             case 'codigo':
-              //  myWindow.document.write(card.codigo); ///substituir pela url
+                //  myWindow.document.write(card.codigo); ///substituir pela url
                 break;
             default:
                 break;

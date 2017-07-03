@@ -99,7 +99,7 @@
 
                 <div class="header">
                     <h2  (click)="toogleDropDown(card)">
-                        {{card.arquivo}}
+                        {{card.nome}}
                         <i class="fa fa-ellipsis-v menuc" aria-hidden="true"></i>
                     </h2>
                     <ul class="dropdown-menu pull-right" [ngClass]="{visivel: dropdows[card.id]}">
@@ -108,7 +108,7 @@
                             <i class="fa fa-external-link" aria-hidden="true"></i> Destacar
                         </li>
 
-                        <li  class="dropdown-item" (click)="baixar(card)">
+                        <li *ngIf="isArquivo(card)"  class="dropdown-item" (click)="baixar(card)">
                             <a [href]="getURL(card)" target="_blank" download>
                                 <i class="fa fa-download" aria-hidden="true"></i> Baixar
                             </a>
@@ -144,14 +144,14 @@
                     </p>
 
                     <p>
-                        <b>Nome:</b>  {{card.arquivo}}
+                        <b>Nome:</b>  {{ isArquivo(card) ? card.arquivo : card.nome}}
                     </p>
 
-                    <p>
+                    <p *ngIf="isArquivo(card)">
                         <b>Tamanho:</b>  {{getSize(card)}}
                     </p>
 
-                    <p>
+                    <p *ngIf="isArquivo(card)">
                         <b>Data:</b>  {{getMeta(card).data}}
                     </p>
 
@@ -159,7 +159,15 @@
                         <b>Dimensão:</b>  {{getMeta(card).width}} X {{getMeta(card).height}}
                     </p>
 
-                    <p>
+                    <p *ngSwitchCase="'terminal'">
+                        <b>Token:</b>  {{codigo}}
+                    </p>
+
+                    <p *ngSwitchCase="'terminal'">
+                        <b>Status:</b>  {{getMeta(card).status}}
+                    </p>
+
+                    <p *ngIf="isArquivo(card)">
                         <b>URL:</b> <a href="{{getURL(card)}}" target="_blank"> {{getURL(card)}}</a>
                     </p>
 
@@ -179,6 +187,35 @@
                     </div>
 
                     <div *ngSwitchCase="'codigo'" [innerHtml]="getPrevia(card.previa)">
+                    </div>
+
+                    <div *ngSwitchCase="'terminal'">
+                        <table id="terminal">
+                            <tbody *ngIf="terminais[card.id]" [style.cursor]="terminais[card.id].cursor">
+
+                            <tr *ngFor="let line of terminais[card.id].linhas;let i = index">
+                                <td class="{{terminais[card.id].classes[i]}}">{{line}}</td>
+                            </tr>
+
+                            <tr>
+                                <td id="linha-temporaria" class="linha">
+                                    {{terminais[card.id].linhaTemp}}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td id="insert-text" class="linha">
+                                    <div id="prompt">{{terminais[card.id].prompt}}</div>
+                                    <input
+                                        (keyup.enter)="terminais[card.id].sendLinha()"
+                                        type="text"
+                                        id="type"
+                                        [(ngModel)]="terminais[card.id].input"/>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
                     </div>
 
                     <iframe [src]="domSanitizer.bypassSecurityTrustResourceUrl(getURL(card))" *ngSwitchCase="'rbokeh'"></iframe>

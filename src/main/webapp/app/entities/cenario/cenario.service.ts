@@ -92,16 +92,16 @@ export class CenarioService {
     // @RequestParam("cript") boolean cript,
     // @RequestParam("image") boolean image
 
-    public publicarArquivo(cenario: Cenario,
-                           diretorio: string,
-                           subdiretorio: string,
-                           file: string,
-                           meta: boolean,
+    public publicarArquivo(c: Cenario,
+                           d: string,
+                           s: string,
+                           f: string,
+                           m: boolean,
                            content: boolean,
                            cript: boolean,
-                           isImage: boolean): Observable<any> {
+                           i: boolean): Observable<any> {
             return this.http
-                .get(`${this.resourceUrl}/publicar/${cenario.id}/?diretorio=${diretorio}&subdiretorio=${subdiretorio}&file=${file}&meta=${meta}&content=${content}&cript=${cript}&image=${isImage}`)
+                .get(`${this.resourceUrl}/publicar/${c.id}/?diretorio=${d}&subdiretorio=${s}&file=${f}&meta=${m}&content=${content}&cript=${cript}&image=${i}`)
                 .map((res) => res.json());
     }
 }

@@ -104,11 +104,11 @@ export class BaseService {
         return this.http.get(`${this.resourceUrl}/campos/${base.id}`)
             .map((res: Response) => {
                 const result = res.json();
-                if(result.error) {
+                if (result.error) {
                     console.log('erro ao obter base: ' + result.error);
                     return [];
                 }
-                if(!result.campos) {
+                if (!result.campos) {
                     console.log('base sem campos e erros: ' + JSON.stringify(result));
                     return [];
                 }

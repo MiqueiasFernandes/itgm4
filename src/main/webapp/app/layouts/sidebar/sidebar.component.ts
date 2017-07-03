@@ -119,7 +119,7 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    private getDados(account: Account) {
+    getDados(account: Account) {
         if (!account) {
             this.closeSidebar();
         } else {
@@ -127,30 +127,30 @@ export class SidebarComponent implements OnInit {
                 (account.firstName ? account.firstName : '') + ' ' +
                 (account.lastName ? account.lastName : '');
             this.email = account.email;
-            this.image = account.imageUrl ? ("http://itgm.mikeias.net:8099/temp/" + account.imageUrl) : null;
+            this.image = account.imageUrl ? ("http://itgm.mikeias.net:8098/temp/" + account.imageUrl) : null;
         }
     }
 
-    private toogleBlockSideBar() {
+    toogleBlockSideBar() {
         this.sidebarService.toogleSidebarFixed();
         if (!this.sidebarService.isLock()) {
             this.closeSidebar();
         }
     }
 
-    private openSidebar() {
+    openSidebar() {
         this.sidebarService.openSidebar();
     }
 
-    private closeSidebar() {
+    closeSidebar() {
         this.sidebarService.closeSidebar();
     }
 
-    private isUserAuthenticated() {
+    isUserAuthenticated() {
         return this.principal.isAuthenticated();
     }
 
-    private configurar() {
+    configurar() {
         if (!this.nome || this.nome === ' ' || !this.image) {
             this.router.navigate(['/settings']);
         }
@@ -282,11 +282,11 @@ export class SidebarComponent implements OnInit {
         }
     }
 
-    private selecionarProjeto() {
+    selecionarProjeto() {
         this.modalService.open(SelecionarProjetoComponent);
     }
 
-    private selecionarCenario() {
+    selecionarCenario() {
         this.customizeService.getCustomize()
             .subscribe(
                 (customize: Customize) => {

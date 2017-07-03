@@ -70,6 +70,7 @@ public class TerminalResource {
         );
 
         terminal.setUrl(token);
+        terminal.setStatus(2);
         Terminal result = terminalRepository.save(terminal);
         return ResponseEntity.created(new URI("/api/terminals/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

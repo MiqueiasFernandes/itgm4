@@ -16,7 +16,7 @@ export class SettingsComponent implements OnInit {
     file: any;
     onLoad = false;
     showMenu = false;
-    server: string = "itgm.mikeias.net";
+    server = 'itgm.mikeias.net';
 
     constructor(
         private account: AccountService,
