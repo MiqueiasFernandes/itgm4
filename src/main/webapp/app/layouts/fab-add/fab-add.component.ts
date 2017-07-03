@@ -76,6 +76,6 @@ export class FabAddComponent {
     }
 
     novaPrognose() {
-        this.modalService.open(FabAddPrognoseComponent);
+        this.modalService.open(FabAddPrognoseComponent, {size: 'lg'});
     }
 }

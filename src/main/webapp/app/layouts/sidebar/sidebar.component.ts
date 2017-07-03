@@ -28,6 +28,7 @@ import {
 import { ShareService } from '../share/share.service';
 
 import { FolderComponent } from './folder/folder.component';
+import {FabAddPrognoseComponent} from "../../entities/prognose/fab-add-prognose/fab-add-prognose.component";
 
 @Component({
     selector: 'jhi-sidebar',
@@ -339,6 +340,10 @@ export class SidebarComponent implements OnInit {
     closeMenuArquivos() {
         this.isArquivosOpen = false;
         this.arquivos = [];
+    }
+
+    novaPrognose() {
+        this.modalService.open(FabAddPrognoseComponent, {size: 'lg'});
     }
 
 }
