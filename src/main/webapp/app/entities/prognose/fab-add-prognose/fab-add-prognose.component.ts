@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {AlertService} from 'ng-jhipster';
 import { HomeService } from '../../../home/home.service';
@@ -15,6 +16,8 @@ import {
 
 =======
 >>>>>>> parent of 4657160... view add prognose
+=======
+>>>>>>> parent of 4657160... view add prognose
 @Component({
   selector: 'jhi-fab-add-prognose',
   templateUrl: './fab-add-prognose.component.html',
@@ -26,6 +29,7 @@ export class FabAddPrognoseComponent implements OnInit {
 
   constructor() { }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     prognose: Prognose;
 
@@ -309,6 +313,10 @@ export class Bases {
     treino: Base;
     avaliacao: Base;
     percentual: number;
+=======
+  ngOnInit() {
+  }
+>>>>>>> parent of 4657160... view add prognose
 
     constructor() {
         this.modo = 0;
