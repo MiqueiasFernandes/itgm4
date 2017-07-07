@@ -17,6 +17,7 @@
                 "terminal": "Terminal",
                 "card": "Card",
                 "prognose": "Prognose",
+                "avaliacao": "Avaliacao",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {

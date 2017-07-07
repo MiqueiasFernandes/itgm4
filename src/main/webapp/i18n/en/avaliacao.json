@@ -1,0 +1,26 @@
+{
+    "itgmApp": {
+        "avaliacao" : {
+            "home": {
+                "title": "Avaliacaos",
+                "createLabel": "Create a new Avaliacao",
+                "createOrEditLabel": "Create or edit a Avaliacao"
+            },
+            "created": "A new Avaliacao is created with identifier {{ param }}",
+            "updated": "A Avaliacao is updated with identifier {{ param }}",
+            "deleted": "A Avaliacao is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Avaliacao {{ id }}?"
+            },
+            "detail": {
+                "title": "Avaliacao"
+            },
+            "nome": "Nome",
+            "status": "Status",
+            "codigo": "Codigo",
+            "resultado": "Resultado",
+            "prognose": "Prognose",
+            "modelosavaliados": "Modelosavaliados"
+        }
+    }
+}

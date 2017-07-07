@@ -10,6 +10,7 @@ import { ItgmCustomizeModule } from './customize/customize.module';
 import { ItgmTerminalModule } from './terminal/terminal.module';
 import { ItgmCardModule } from './card/card.module';
 import { ItgmPrognoseModule } from './prognose/prognose.module';
+import { ItgmAvaliacaoModule } from './avaliacao/avaliacao.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ItgmPrognoseModule } from './prognose/prognose.module';
         ItgmTerminalModule,
         ItgmCardModule,
         ItgmPrognoseModule,
+        ItgmAvaliacaoModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

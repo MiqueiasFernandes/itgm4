@@ -1,0 +1,45 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "prognose",
+            "otherEntityName": "prognose",
+            "relationshipType": "one-to-one",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "avaliacao"
+        },
+        {
+            "relationshipName": "modelosavaliados",
+            "otherEntityName": "modeloExclusivo",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "avaliacao"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "nome",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "codigo",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "1000000"
+        },
+        {
+            "fieldName": "resultado",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20170707031916",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "avaliacao",
+    "pagination": "pagination"
+}

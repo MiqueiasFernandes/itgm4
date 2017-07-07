@@ -50,6 +50,8 @@ public class CacheConfiguration {
             cm.createCache(com.itgm.domain.Terminal.class.getName(), jcacheConfiguration);
             cm.createCache(com.itgm.domain.Card.class.getName(), jcacheConfiguration);
             cm.createCache(com.itgm.domain.Prognose.class.getName(), jcacheConfiguration);
+            cm.createCache(com.itgm.domain.Avaliacao.class.getName(), jcacheConfiguration);
+            cm.createCache(com.itgm.domain.Avaliacao.class.getName() + ".modelosavaliados", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

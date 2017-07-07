@@ -1,0 +1,26 @@
+{
+    "itgmApp": {
+        "avaliacao" : {
+            "home": {
+                "title": "Avaliacaos",
+                "createLabel": "Criar novo Avaliacao",
+                "createOrEditLabel": "Criar ou editar Avaliacao"
+            },
+            "created": "Um novo Avaliacao é criado com o identificador {{ param }}",
+            "updated": "Um Avaliacao é atualizado com o identificador {{ param }}",
+            "deleted": "Um Avaliacao é deletado com o identificador {{ param }}",
+            "delete": {
+                "question": "Tem certeza de que deseja excluir Avaliacao {{ id }}?"
+            },
+            "detail": {
+                "title": "Avaliacao"
+            },
+            "nome": "Nome",
+            "status": "Status",
+            "codigo": "Codigo",
+            "resultado": "Resultado",
+            "prognose": "Prognose",
+            "modelosavaliados": "Modelosavaliados"
+        }
+    }
+}

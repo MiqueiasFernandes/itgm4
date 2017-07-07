@@ -102,4 +102,21 @@ export class ModeloExclusivoService {
             }
         );
     }
+
+    getModeloExclusivoByCenario(cenario: Cenario): Observable<ModeloExclusivo[]> {
+        return this.getAllModelos()
+            .map( (modelosExclusivos: ModeloExclusivo[]) => {
+                if (!cenario) {
+                    return [];
+                }
+                const modelos: ModeloExclusivo[] = [];
+                modelosExclusivos.forEach((model) => {
+                    if (model.cenario.id === cenario.id) {
+                        modelos.push(model);
+                    }
+                });
+                return modelos;
+            }
+        );
+    }
 }

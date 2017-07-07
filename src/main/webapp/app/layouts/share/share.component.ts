@@ -112,9 +112,7 @@ export class ShareComponent {
 
 
     private  receberBase(compartilhar: Compartilhar) {
-        alert('recebendo base ');
         if(compartilhar.tipo === 'Base') {
-            alert('recebendo e');
             this.customizeService.getCustomize().subscribe(
                 (customize: Customize) => {
                     if ( customize.projeto && customize.projeto.id ) {
