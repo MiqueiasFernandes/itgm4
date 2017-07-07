@@ -1,5 +1,6 @@
 import { Modelo } from '../modelo';
 import { Cenario } from '../cenario';
+import { Avaliacao } from '../avaliacao';
 export class ModeloExclusivo {
     constructor(
         public id?: number,
@@ -8,6 +9,7 @@ export class ModeloExclusivo {
         public palpite?: string,
         public modelo?: Modelo,
         public cenario?: Cenario,
+        public avaliacao?: Avaliacao,
     ) {
     }
 }

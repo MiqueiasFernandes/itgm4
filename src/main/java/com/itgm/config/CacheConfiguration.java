@@ -52,6 +52,7 @@ public class CacheConfiguration {
             cm.createCache(com.itgm.domain.Prognose.class.getName(), jcacheConfiguration);
             cm.createCache(com.itgm.domain.Avaliacao.class.getName(), jcacheConfiguration);
             cm.createCache(com.itgm.domain.Avaliacao.class.getName() + ".modelosavaliados", jcacheConfiguration);
+            cm.createCache(com.itgm.domain.ModeloExclusivo.class.getName() + ".avaliacaos", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

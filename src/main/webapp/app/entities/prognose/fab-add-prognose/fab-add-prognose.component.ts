@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+<<<<<<< HEAD
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {AlertService} from 'ng-jhipster';
 import { HomeService } from '../../../home/home.service';
@@ -12,16 +13,20 @@ import {
 } from '../../';
 
 
+=======
+>>>>>>> parent of 4657160... view add prognose
 @Component({
-    selector: 'jhi-fab-add-prognose',
-    templateUrl: './fab-add-prognose.component.html',
-    styleUrls: [
-        './fab-add-prognose.scss'
-    ]
+  selector: 'jhi-fab-add-prognose',
+  templateUrl: './fab-add-prognose.component.html',
+  styleUrls: [
+      './fab-add-prognose.scss'
+  ]
 })
 export class FabAddPrognoseComponent implements OnInit {
 
+  constructor() { }
 
+<<<<<<< HEAD
     prognose: Prognose;
 
     primeira = 1;
@@ -276,6 +281,10 @@ export class FabAddPrognoseComponent implements OnInit {
     private close() {
         this.activeModal.dismiss('closed');
     }
+=======
+  ngOnInit() {
+  }
+>>>>>>> parent of 4657160... view add prognose
 
 }
 

@@ -1,10 +1,13 @@
 package com.itgm.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -35,6 +38,11 @@ public class ModeloExclusivo implements Serializable {
 
     @ManyToOne
     private Cenario cenario;
+
+    @ManyToMany(mappedBy = "modelosavaliados")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Avaliacao> avaliacaos = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -107,6 +115,31 @@ public class ModeloExclusivo implements Serializable {
 
     public void setCenario(Cenario cenario) {
         this.cenario = cenario;
+    }
+
+    public Set<Avaliacao> getAvaliacaos() {
+        return avaliacaos;
+    }
+
+    public ModeloExclusivo avaliacaos(Set<Avaliacao> avaliacaos) {
+        this.avaliacaos = avaliacaos;
+        return this;
+    }
+
+    public ModeloExclusivo addAvaliacao(Avaliacao avaliacao) {
+        this.avaliacaos.add(avaliacao);
+        avaliacao.getModelosavaliados().add(this);
+        return this;
+    }
+
+    public ModeloExclusivo removeAvaliacao(Avaliacao avaliacao) {
+        this.avaliacaos.remove(avaliacao);
+        avaliacao.getModelosavaliados().remove(this);
+        return this;
+    }
+
+    public void setAvaliacaos(Set<Avaliacao> avaliacaos) {
+        this.avaliacaos = avaliacaos;
     }
 
     @Override

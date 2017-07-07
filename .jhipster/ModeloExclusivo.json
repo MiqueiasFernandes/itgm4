@@ -12,6 +12,13 @@
             "otherEntityName": "cenario",
             "relationshipType": "many-to-one",
             "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "avaliacao",
+            "otherEntityName": "avaliacao",
+            "relationshipType": "many-to-many",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "modelosavaliados"
         }
     ],
     "fields": [

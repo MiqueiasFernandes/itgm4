@@ -3,8 +3,6 @@ import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/ht
 import { Observable } from 'rxjs/Rx';
 
 import { ModeloExclusivo } from './modelo-exclusivo.model';
-import { Modelo } from '../modelo/modelo.model';
-import { Cenario } from '../cenario/cenario.model';
 @Injectable()
 export class ModeloExclusivoService {
 
@@ -55,68 +53,5 @@ export class ModeloExclusivoService {
             options.search = params;
         }
         return options;
-    }
-
-    getAllModelos(): Observable<ModeloExclusivo[]> {
-        return this.query({
-            page: 0,
-            size: 100,
-            sort: ['id']
-        }).map(
-            (res: Response) => {
-                const modelosExclusivos: ModeloExclusivo[] = res.json();
-                return modelosExclusivos;
-            });
-    }
-
-    getModeloExclusivoByModelo(modelo: Modelo): Observable<ModeloExclusivo[]> {
-        return this.getAllModelos().map(
-            (modelosExclusivos: ModeloExclusivo[]) => {
-                if (!modelo) {
-                    return null;
-                }
-                const modelos: ModeloExclusivo[] = [];
-                modelosExclusivos.forEach((model) => {
-                    if (model.modelo.id === modelo.id) {
-                        modelos.push(model);
-                    }
-                });
-                return modelos;
-            }
-        );
-    }
-
-    getModeloExclusivoByModeloAndCenario(modelo: Modelo, cenario: Cenario): Observable<ModeloExclusivo[]> {
-        return this.getModeloExclusivoByModelo(modelo).map(
-            (modelosExclusivos: ModeloExclusivo[]) => {
-                if (!cenario) {
-                    return null;
-                }
-                const modelos: ModeloExclusivo[] = [];
-                modelosExclusivos.forEach((model) => {
-                    if (model.cenario.id === cenario.id) {
-                        modelos.push(model);
-                    }
-                });
-                return modelos;
-            }
-        );
-    }
-
-    getModeloExclusivoByCenario(cenario: Cenario): Observable<ModeloExclusivo[]> {
-        return this.getAllModelos()
-            .map( (modelosExclusivos: ModeloExclusivo[]) => {
-                if (!cenario) {
-                    return [];
-                }
-                const modelos: ModeloExclusivo[] = [];
-                modelosExclusivos.forEach((model) => {
-                    if (model.cenario.id === cenario.id) {
-                        modelos.push(model);
-                    }
-                });
-                return modelos;
-            }
-        );
     }
 }

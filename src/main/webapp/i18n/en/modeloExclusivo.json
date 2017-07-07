@@ -19,7 +19,8 @@
             "mapeamento": "Mapeamento",
             "palpite": "Palpite",
             "modelo": "Modelo",
-            "cenario": "Cenario"
+            "cenario": "Cenario",
+            "avaliacao": "Avaliacao"
         }
     }
 }

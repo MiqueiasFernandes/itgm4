@@ -10,6 +10,7 @@ import { ModeloExclusivoPopupService } from './modelo-exclusivo-popup.service';
 import { ModeloExclusivoService } from './modelo-exclusivo.service';
 import { Modelo, ModeloService } from '../modelo';
 import { Cenario, CenarioService } from '../cenario';
+import { Avaliacao, AvaliacaoService } from '../avaliacao';
 
 @Component({
     selector: 'jhi-modelo-exclusivo-dialog',
@@ -24,6 +25,8 @@ export class ModeloExclusivoDialogComponent implements OnInit {
     modelos: Modelo[];
 
     cenarios: Cenario[];
+
+    avaliacaos: Avaliacao[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
@@ -31,6 +34,7 @@ export class ModeloExclusivoDialogComponent implements OnInit {
         private modeloExclusivoService: ModeloExclusivoService,
         private modeloService: ModeloService,
         private cenarioService: CenarioService,
+        private avaliacaoService: AvaliacaoService,
         private eventManager: EventManager
     ) {
         this.jhiLanguageService.setLocations(['modeloExclusivo']);
@@ -43,6 +47,8 @@ export class ModeloExclusivoDialogComponent implements OnInit {
             (res: Response) => { this.modelos = res.json(); }, (res: Response) => this.onError(res.json()));
         this.cenarioService.query().subscribe(
             (res: Response) => { this.cenarios = res.json(); }, (res: Response) => this.onError(res.json()));
+        this.avaliacaoService.query().subscribe(
+            (res: Response) => { this.avaliacaos = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     clear() {
         this.activeModal.dismiss('cancel');
@@ -87,6 +93,21 @@ export class ModeloExclusivoDialogComponent implements OnInit {
 
     trackCenarioById(index: number, item: Cenario) {
         return item.id;
+    }
+
+    trackAvaliacaoById(index: number, item: Avaliacao) {
+        return item.id;
+    }
+
+    getSelected(selectedVals: Array<any>, option: any) {
+        if (selectedVals) {
+            for (let i = 0; i < selectedVals.length; i++) {
+                if (option.id === selectedVals[i].id) {
+                    return selectedVals[i];
+                }
+            }
+        }
+        return option;
     }
 }
 
